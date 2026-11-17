@@ -3,17 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import api from "../axios-instance";
 
+/// Importing icons used throughout the login and signup components
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { IoMdPerson } from "react-icons/io";
 import { PiChefHatBold } from "react-icons/pi";
 
 export default function AuthPage() {
+  /// Tracking the active authentication mode, password visibility, and alert message states
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [alert, showAlert] = useState({ message: "", show: false });
 
   const navigate = useNavigate();
 
+  /// Initializing form fields and provides a reset function after a user makes a submission
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
       email: "",
@@ -23,11 +26,15 @@ export default function AuthPage() {
       username: "",
     },
   });
-
+  /// Switches between login and registration forms within the component
   const toggleFormMode = () => setIsLogin(!isLogin);
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
-  // LOGIN HANDLER
+  // / LOGIN HANDLER 
+  /**
+   *  Authenticate a user with their credentials (email and password)
+   *  AFter saving the auth token, redirects user to the dashboard
+   */
   const loginUser = async (values) => {
     try {
       const response = await api.post("/api/auth/login", {
@@ -35,6 +42,7 @@ export default function AuthPage() {
         password: values.password,
       });
 
+      /// Saves the authentication token and user info
       localStorage.setItem(
         "token",
         response.data.data.tokens.accessToken
@@ -47,13 +55,19 @@ export default function AuthPage() {
       showAlert({ show: true, message: "Login successful!" });
       navigate("/dashboard");
     } catch (error) {
+      /// Displays the specific error from the API or uses the fallback message
       const errorMessage =
         error.response?.data?.error || "Login failed. Please try again.";
       showAlert({ show: true, message: errorMessage });
     }
   };
 
-  // SIGNUP HANDLER
+  /// SIGNUP HANDLER
+  /**
+   * Registers a new user after submitting their info
+   * Clears the form and redirects the usser to the dashboard 
+   * after sucessful sign up submission
+   */
   const signupUser = async (values) => {
     try {
       const response = await api.post("/api/auth/register", {
@@ -64,10 +78,13 @@ export default function AuthPage() {
         username: values.username,
       });
 
+      /// Stores the user info and token returned by the API into the browser's local storage
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
 
       showAlert({ show: true, message: "Signup successful! Welcome to ChefMate!" });
+
+      /// Clears the registration form before navigating away
       reset();
       navigate("/dashboard");
     } catch (error) {
@@ -78,13 +95,13 @@ export default function AuthPage() {
   };
 
   return (
-    <section id="auth" className="w-full text-gray-800 flex bg-[#f8f6f3] min-h-screen">
+    <section id="auth" className="w-full mx-4 text-gray-800 flex bg-[#f8f6f3] min-h-screen">
       {/* Left Column */}
       <div className="w-[55%] min-w-[400px] px-8 py-20">
         <span className="rounded-full py-1 px-3 bg-amber-100 font-semibold">Join the community</span>
-        <h2 className="y">
+        <h2 className="my-4">
           Welcome to <br />
-          <span className="text-green-600">ChefMate</span>
+          <span className="text-4xl font-semibold text-green-600">ChefMate</span>
         </h2>
         <p className="mb-10">
           Join thousands of home cooks sharing recipes, planning meals, and creating amazing culinary experiences together.
@@ -162,6 +179,7 @@ export default function AuthPage() {
           </div>
 
           {/* Form */}
+          {/* Conditional that renders the correct form based on user signing up or logging in */}
           {isLogin ? (
             <LoginForm
               handleSubmit={handleSubmit}
@@ -205,6 +223,7 @@ function LoginForm({
   togglePasswordVisibility,
 }) {
   return (
+    /// Connects the React hook form's submission handler to the login function
     <form
       className="space-y-6"
       onSubmit={handleSubmit(loginUser)}
@@ -225,6 +244,7 @@ function LoginForm({
       {/* Password Input */}
       <div className="relative">
         <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        {/* Switches between text and password input types to control visibility */}
         <input
           type={showPassword ? "text" : "password"}
           placeholder="Password"
@@ -279,6 +299,7 @@ function SignupForm({
   togglePasswordVisibility,
 }) {
   return (
+    /// Submits the registration usin React hook form's validation and handling
     <form
       className="space-y-6"
       onSubmit={handleSubmit(signupUser)}
@@ -362,6 +383,10 @@ function SignupForm({
   );
 }
 
+/**
+ * Displays the authentication feedback and provides a dismiss button.
+ * The alert is conditionally rendered based on its visibility state.
+ */
 function Alert({ alert, showAlert }) {
   return (
     <>

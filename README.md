@@ -36,7 +36,7 @@ ChefMate is a full-stack web application that allows users to create, save, and 
 ## Project Structure
 
 ```
-CookMate/
+ChefMate/
 ├── backend/              # Backend server code
 │   ├── config/          # Configuration files
 │   ├── controllers/     # Route controllers
@@ -116,10 +116,10 @@ Frontend (.env):
 
 ## Development Team
 
-- Bryan Lopez - [@blopez024](https://github.com/blopez024)
-- Binu K - [@BinuBims](https://github.com/BinuBims)
 - Christopher House - [@thechrishouse](https://github.com/thechrishouse/)
+- Binu K - [@BinuBims](https://github.com/BinuBims)
 - Kiraah G - [@Krashberry](https://github.com/Krashberry)
+- Bryan Lopez - [@blopez024](https://github.com/blopez024)
 
 ## Contributing
 
